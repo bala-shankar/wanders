@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Yet Another Gallery</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <!-- GSAP CDN -->
+  <script src="js/gsap.min.js" defer></script>
+  <!-- App JS (compiled from TypeScript) -->
+  <script src="js/app.js" defer></script>
+</head>
+<div id="loader" class="loader-screen">
+  <div class="text-center">
+    <div
+      class="w-16 h-16 border-4 border-dashed rounded-full animate-spin border-yellow-500 mx-auto"
+    ></div>
+    <h2 class="text-white mt-4">Loading ✌️</h2>
+    <p class="text-zinc-400 mt-2">Fetching your photos and videos...</p>
+  </div>
+</div>
+<body>
+  <header class="site-header">
+    <h1>Yet Another Gallery</h1>
+    <p class="subtitle">Moments captured during travel ❤️</p>
+  </header>
+  <main class="container">
+    <section id="trips" class="trips-grid" aria-label="Trips gallery">
+      <!-- Trips injected by app.js -->
+    </section>
+  </main>
+
+  <!-- Modal for slideshow -->
+  <div id="modal" class="modal" aria-hidden="true">
+    <button id="modalClose" class="modal-close" aria-label="Close">&times;</button>
+    <div class="modal-content">
+      <button id="prevBtn" class="nav-btn" aria-label="Previous">&#10094;</button>
+      <div id="slideArea" class="slide-area" role="region" aria-live="polite"></div>
+      <button id="nextBtn" class="nav-btn" aria-label="Next">&#10095;</button>
+    </div>
+    <div id="caption" class="caption"></div>
+  </div>
+
+  <footer class="site-footer">
+    <small>Made with  ❤️</small>
+  </footer>
+</body>
+</html>
