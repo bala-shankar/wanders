@@ -153,6 +153,12 @@ body{
   color:var(--muted);
   border-top:1px solid rgba(255,255,255,0.02);
 }
+a {
+  text-decoration: none; /* Removes underline */
+  color: inherit;        /* Makes the link text color same as surrounding text */
+  user-select: none;     /* Prevents text highlighting (selection) */
+}
+
 @media (max-width:640px){
   .modal-content{flex-direction:column}
   .nav-btn{font-size:1.3rem}

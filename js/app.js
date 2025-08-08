@@ -17,7 +17,7 @@ var trips = [
             { src: 'assets/Rishikesh/4.jpg'},
             { src: 'https://drive.google.com/uc?export=download&id=1c1_1nIghdCCTYIj_42865kx9W9sNDUTE'},
             { src: 'https://drive.google.com/uc?export=download&id=11BmSazYz5rXgV0NhBfGn5Y8AC-69mnfQ'},
-            { src: 'https://drive.google.com/uc?export=download&id=1kAtwUKCApGRqJV_biME7T9zRN4QW512m'},
+            { src: 'https://drive.google.com/uc?export=download&id=1kAtwUKCApGRqJV_biME7T9zRN4QW512m'}
         ]
     },
     {
