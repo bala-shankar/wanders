@@ -78,7 +78,9 @@ function createTripCard(trip) {
     card.setAttribute('data-trip', trip.id);
 
     var coverSrc = trip.cover || (trip.photos.length > 0 ? trip.photos[0].src : '');
-    var isVideo = /\.(mp4|webm|ogg)$/i.test(coverSrc) || coverSrc.includes('drive');
+    var isVideo = /\.(mp4|webm|ogg)$/i.test(coverSrc) 
+                  || coverSrc.includes('drive') 
+                  || coverSrc.includes('bala-shankar.github.io');
 
     var mediaElement;
     if (isVideo) {
@@ -105,7 +107,7 @@ function createTripCard(trip) {
 
     // Updated video count logic:
     function isVideoSrc(src) {
-        return /\.(mp4|webm|ogg)$/i.test(src) || src.includes('drive');
+        return /\.(mp4|webm|ogg)$/i.test(src) || src.includes('drive') || src.includes('bala-shankar.github.io');
     }
 
     var photoCount = trip.photos.filter(p => !isVideoSrc(p.src)).length;
@@ -133,7 +135,6 @@ function createTripCard(trip) {
 
     return card;
 }
-
 
 function renderTrips() {
     var container = document.getElementById('trips');
@@ -170,10 +171,10 @@ function showSlide() {
     // Device check
     const isMobile = window.innerWidth <= 768;
 
-    // Styles for videos (desktop and mobile)
+    // Styles for non-GitHub videos (desktop and mobile)
     const videoStylesDesktop = {
-        maxWidth: "50vw",
-        maxHeight: "5vh",
+        maxWidth: "60vw",
+        maxHeight: "60vh",
         borderRadius: "10px",
         display: 'block',
         margin: '0 auto',
@@ -186,10 +187,26 @@ function showSlide() {
         margin: '0 auto',
     };
 
+    // Larger styles specifically for GitHub Pages videos
+    const githubVideoStylesDesktop = {
+        maxWidth: "80vw",
+        maxHeight: "75vh",
+        borderRadius: "10px",
+        display: 'block',
+        margin: '0 auto',
+    };
+    const githubVideoStylesMobile = {
+        maxWidth: "100vw",
+        maxHeight: "60vh",
+        borderRadius: "10px",
+        display: 'block',
+        margin: '0 auto',
+    };
+
     // Styles for iframe (desktop and mobile)
     const iframeStylesDesktop = {
-        width: '50vw',
-        height: '50vh',
+        width: '60vw',
+        height: '60vh',
         borderRadius: '10px',
         display: 'block',
         margin: '0 auto',
@@ -202,10 +219,9 @@ function showSlide() {
         margin: '0 auto',
     };
 
-    if (photo.src.includes('drive.google.com')) {
+    // Google Drive preview (iframe)
+    if (photo.src.includes('drive.google.com') || photo.src.includes('drive.googleusercontent.com')) {
         let fileId = null;
-
-        // Extract file id from different Drive URL patterns
         const matchFileId = photo.src.match(/\/file\/d\/([^\/]+)/) || photo.src.match(/id=([^&]+)/);
         if (matchFileId) {
             fileId = matchFileId[1];
@@ -217,14 +233,13 @@ function showSlide() {
             iframe.allow = 'autoplay';
             iframe.frameBorder = '0';
             iframe.allowFullscreen = true;
-
             Object.assign(iframe.style, isMobile ? iframeStylesMobile : iframeStylesDesktop);
-
             slideArea.appendChild(iframe);
         } else {
             slideArea.textContent = 'Invalid Google Drive video URL.';
         }
 
+    // Native video files (.mp4/.webm/.ogg etc)
     } else if (isVideoFile(photo.src)) {
         var videoEl = document.createElement('video');
         videoEl.src = photo.src;
@@ -232,10 +247,18 @@ function showSlide() {
         videoEl.autoplay = true;
         videoEl.loop = true;
         videoEl.playsInline = true;
-        videoEl.controls = false; // hide controls and open-in-new-tab icon
+        videoEl.controls = false;
         videoEl.preload = "metadata";
+        videoEl.style.background = '#000'; // black background before load
 
-        Object.assign(videoEl.style, isMobile ? videoStylesMobile : videoStylesDesktop);
+        // Detect GitHub Pages-hosted video (your site)
+        const isGitHubPagesVideo = photo.src.includes('bala-shankar.github.io');
+
+        if (isGitHubPagesVideo) {
+            Object.assign(videoEl.style, isMobile ? githubVideoStylesMobile : githubVideoStylesDesktop);
+        } else {
+            Object.assign(videoEl.style, isMobile ? videoStylesMobile : videoStylesDesktop);
+        }
 
         videoEl.addEventListener('loadedmetadata', () => {
             videoEl.play().catch((err) => {
@@ -254,20 +277,32 @@ function showSlide() {
 
         slideArea.appendChild(videoEl);
 
+    // Regular images
     } else {
         var img = document.createElement('img');
         img.src = photo.src;
         img.alt = photo.alt || photo.caption || currentTrip.title;
         Object.assign(img.style, photoStyles);
+
+        img.addEventListener('error', () => {
+            img.style.display = 'none';
+            var err = document.createElement('div');
+            err.textContent = 'Image failed to load.';
+            err.style.color = 'red';
+            err.style.padding = '1em';
+            slideArea.appendChild(err);
+        });
+
         slideArea.appendChild(img);
     }
 
     var caption = document.getElementById('caption');
     caption.textContent = photo.caption || '';
 
-    gsap.from(slideArea.firstChild, { y: 20, opacity: 0, duration: 0.5, ease: 'power3.out' });
+    if (slideArea.firstChild) {
+        gsap.from(slideArea.firstChild, { y: 20, opacity: 0, duration: 0.5, ease: 'power3.out' });
+    }
 }
-
 
 function openModalForTrip(trip) {
     currentTrip = trip;
