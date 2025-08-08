@@ -219,6 +219,26 @@ function showSlide() {
         margin: '0 auto',
     };
 
+    // Helper to check video extensions
+    function isVideoFile(src) {
+        return /\.(mp4|webm|ogg)$/i.test(src);
+    }
+
+    // Spinner HTML for overlay
+    function createSpinner() {
+        const spinnerWrapper = document.createElement('div');
+        spinnerWrapper.style.position = 'absolute';
+        spinnerWrapper.style.top = '50%';
+        spinnerWrapper.style.left = '50%';
+        spinnerWrapper.style.transform = 'translate(-50%, -50%)';
+        spinnerWrapper.style.pointerEvents = 'none';
+
+        spinnerWrapper.innerHTML = `
+          <div class="w-16 h-16 border-4 border-dashed rounded-full animate-spin border-yellow-500 mx-auto"></div>
+        `;
+        return spinnerWrapper;
+    }
+
     // Google Drive preview (iframe)
     if (photo.src.includes('drive.google.com') || photo.src.includes('drive.googleusercontent.com')) {
         let fileId = null;
@@ -241,41 +261,106 @@ function showSlide() {
 
     // Native video files (.mp4/.webm/.ogg etc)
     } else if (isVideoFile(photo.src)) {
-        var videoEl = document.createElement('video');
-        videoEl.src = photo.src;
-        videoEl.muted = true;
-        videoEl.autoplay = true;
-        videoEl.loop = true;
-        videoEl.playsInline = true;
-        videoEl.controls = false;
-        videoEl.preload = "metadata";
-        videoEl.style.background = '#000'; // black background before load
-
-        // Detect GitHub Pages-hosted video (your site)
         const isGitHubPagesVideo = photo.src.includes('bala-shankar.github.io');
 
         if (isGitHubPagesVideo) {
-            Object.assign(videoEl.style, isMobile ? githubVideoStylesMobile : githubVideoStylesDesktop);
-        } else {
-            Object.assign(videoEl.style, isMobile ? videoStylesMobile : videoStylesDesktop);
-        }
+            // Container for thumbnail + spinner + video
+            const container = document.createElement('div');
+            container.style.position = 'relative';
+            container.style.display = 'inline-block';
 
-        videoEl.addEventListener('loadedmetadata', () => {
-            videoEl.play().catch((err) => {
-                console.warn('Autoplay failed:', err);
+            // Attempt thumbnail src by replacing extension with .jpg
+            // If you have better thumbnails, replace here
+            const thumbnailSrc = photo.src.replace(/\.\w+$/, '.jpg');
+
+            const thumbnail = document.createElement('img');
+            thumbnail.src = thumbnailSrc;
+            thumbnail.alt = 'Video thumbnail';
+            Object.assign(thumbnail.style, {
+                maxWidth: isMobile ? "100vw" : "80vw",
+                maxHeight: isMobile ? "60vh" : "75vh",
+                borderRadius: "10px",
+                display: 'block',
+                margin: '0 auto',
+                filter: 'brightness(0.7)',
             });
-        });
 
-        videoEl.addEventListener('error', () => {
-            slideArea.innerHTML = '';
-            var errorMsg = document.createElement('div');
-            errorMsg.textContent = 'Video failed to load.';
-            errorMsg.style.color = 'red';
-            errorMsg.style.padding = '1em';
-            slideArea.appendChild(errorMsg);
-        });
+            const spinner = createSpinner();
 
-        slideArea.appendChild(videoEl);
+            const videoEl = document.createElement('video');
+            videoEl.src = photo.src;
+            videoEl.muted = true;
+            videoEl.autoplay = true;
+            videoEl.loop = true;
+            videoEl.playsInline = true;
+            videoEl.controls = false;
+            videoEl.preload = "metadata";
+
+            Object.assign(videoEl.style, isMobile ? githubVideoStylesMobile : githubVideoStylesDesktop);
+
+            videoEl.style.position = 'absolute';
+            videoEl.style.top = '0';
+            videoEl.style.left = '0';
+            videoEl.style.width = '100%';
+            videoEl.style.height = '100%';
+            videoEl.style.borderRadius = '10px';
+            videoEl.style.objectFit = 'cover';
+            videoEl.style.display = 'none'; // hide video initially
+
+            videoEl.addEventListener('canplay', () => {
+                spinner.style.display = 'none';
+                thumbnail.style.display = 'none';
+                videoEl.style.display = 'block';
+                videoEl.play().catch(e => console.warn('Video play failed:', e));
+            });
+
+            videoEl.addEventListener('error', () => {
+                spinner.style.display = 'none';
+                container.innerHTML = '';
+                const err = document.createElement('div');
+                err.textContent = 'Video failed to load.';
+                err.style.color = 'red';
+                err.style.padding = '1em';
+                container.appendChild(err);
+            });
+
+            container.appendChild(thumbnail);
+            container.appendChild(spinner);
+            container.appendChild(videoEl);
+
+            slideArea.appendChild(container);
+
+        } else {
+            // Non-GitHub videos: show video directly
+            var videoEl = document.createElement('video');
+            videoEl.src = photo.src;
+            videoEl.muted = true;
+            videoEl.autoplay = true;
+            videoEl.loop = true;
+            videoEl.playsInline = true;
+            videoEl.controls = false;
+            videoEl.preload = "metadata";
+            videoEl.style.background = '#000'; // black background before load
+
+            Object.assign(videoEl.style, isMobile ? videoStylesMobile : videoStylesDesktop);
+
+            videoEl.addEventListener('loadedmetadata', () => {
+                videoEl.play().catch((err) => {
+                    console.warn('Autoplay failed:', err);
+                });
+            });
+
+            videoEl.addEventListener('error', () => {
+                slideArea.innerHTML = '';
+                var errorMsg = document.createElement('div');
+                errorMsg.textContent = 'Video failed to load.';
+                errorMsg.style.color = 'red';
+                errorMsg.style.padding = '1em';
+                slideArea.appendChild(errorMsg);
+            });
+
+            slideArea.appendChild(videoEl);
+        }
 
     // Regular images
     } else {
@@ -303,6 +388,7 @@ function showSlide() {
         gsap.from(slideArea.firstChild, { y: 20, opacity: 0, duration: 0.5, ease: 'power3.out' });
     }
 }
+
 
 function openModalForTrip(trip) {
     currentTrip = trip;

@@ -159,6 +159,39 @@ a {
   user-select: none;     /* Prevents text highlighting (selection) */
 }
 
+.w-16 {
+  width: 4rem;
+}
+.h-16 {
+  height: 4rem;
+}
+.border-4 {
+  border-width: 4px;
+}
+.border-dashed {
+  border-style: dashed;
+}
+.rounded-full {
+  border-radius: 9999px;
+}
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+.border-yellow-500 {
+  border-color: #eab308;
+}
+.mx-auto {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+
 @media (max-width:640px){
   .modal-content{flex-direction:column}
   .nav-btn{font-size:1.3rem}
