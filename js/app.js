@@ -1,14 +1,8 @@
 // Add this near the top
 var priorityImages = [
     'assets/Rishikesh/4.jpg',
-    "assets/Rishikesh/1.jpg",
-    "assets/Rishikesh/2.jpg",
     'assets/Daramshala/1.jpg',
-    'assets/Daramshala/2.jpg',
-    'assets/Daramshala/3.jpg',
-    'assets/Pune/1.jpg',
-    'assets/Pune/2.jpg',
-    'assets/Pune/3.jpg'
+    'assets/Pune/1.jpg'
     // Add more important images here
 ];
 
