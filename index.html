@@ -7,22 +7,25 @@
   <link rel="stylesheet" href="css/styles.css">
   <!-- GSAP CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
-  <!-- App JS (compiled from TypeScript) -->
+  <!-- App JS -->
   <script src="js/app.js" defer></script>
 </head>
-<!-- <div id="loader" class="loader-screen">
-  <div class="text-center">
-    <div
-      class="w-16 h-16 border-4 border-dashed rounded-full animate-spin border-yellow-500 mx-auto"
-    ></div>
-    <h2 class="text-white mt-4">Loading ✌️</h2>
-  </div>
-</div> -->
+
 <body>
+  <!-- Loader Screen -->
+  <div id="loader" class="loader-screen" style="position:fixed; inset:0; background:#0f1724; display:flex; align-items:center; justify-content:center; flex-direction:column; z-index:9999;">
+    <h2 class="text-white mt-4">Loading</h2>
+    <div id="progress-container" style="width:300px; height:20px; background:rgba(255,255,255,0.2); border-radius:10px; margin-top:20px; overflow:hidden;">
+      <div id="progress-bar" style="height:100%; width:0%; background:#facc15; transition:width 0.3s ease;"></div>
+    </div>
+    <p id="progress-text" style="color:white; margin-top:10px;">0%</p>
+  </div>
+
   <header class="site-header">
     <h1>Yet Another Gallery</h1>
     <p class="subtitle">Miles • Moments • Memories</p>
   </header>
+
   <main class="container">
     <section id="trips" class="trips-grid" aria-label="Trips gallery">
       <!-- Trips injected by app.js -->
@@ -41,11 +44,10 @@
   </div>
 
   <footer class="site-footer">
-  <p class="contact-info">
-    <a href="mailto:vijayanbala35@gmail.com">vijayanbala35@gmail.com</a> | <a href="tel:7867002979">+91-7867002979</a>
-  </p>
-  <small>Made with &nbsp;❤️</small>
-</footer>
-
+    <p class="contact-info">
+      <a href="mailto:vijayanbala35@gmail.com">vijayanbala35@gmail.com</a> | <a href="tel:7867002979">+91-7867002979</a>
+    </p>
+    <small>Made with &nbsp;❤️</small>
+  </footer>
 </body>
 </html>

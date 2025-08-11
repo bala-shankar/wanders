@@ -1,3 +1,6 @@
+// =====================
+// Trips Data
+// =====================
 var trips = [
     {
         id: 'trip-kyoto',
@@ -72,6 +75,9 @@ function isVideoFile(src) {
     return /\.(mp4|webm|ogg)$/i.test(src);
 }
 
+// =====================
+// Create Trip Card
+// =====================
 function createTripCard(trip) {
     var card = document.createElement('article');
     card.className = 'trip-card';
@@ -105,7 +111,6 @@ function createTripCard(trip) {
     }
     card.appendChild(mediaElement);
 
-    // Updated video count logic:
     function isVideoSrc(src) {
         return /\.(mp4|webm|ogg)$/i.test(src) || src.includes('drive') || src.includes('bala-shankar.github.io');
     }
@@ -136,20 +141,20 @@ function createTripCard(trip) {
     return card;
 }
 
+// =====================
+// Render Trips
+// =====================
 function renderTrips() {
     var container = document.getElementById('trips');
     trips.forEach(t => container.appendChild(createTripCard(t)));
     gsap.from('.trip-card', { y: 18, opacity: 0, stagger: 0.08, duration: 0.6, ease: 'power2.out' });
 }
 
+// =====================
+// Slideshow Logic
+// =====================
 var currentTrip = null;
 var currentIndex = 0;
-
-function applyStyles(element, styles) {
-    for (const key in styles) {
-        element.style[key] = styles[key];
-    }
-}
 
 function showSlide() {
     if (!currentTrip) return;
@@ -159,7 +164,6 @@ function showSlide() {
 
     var photo = currentTrip.photos[currentIndex];
 
-    // Styles for photos (images)
     const photoStyles = {
         maxWidth: "100%",
         maxHeight: "75vh",
@@ -168,10 +172,8 @@ function showSlide() {
         margin: '0 auto',
     };
 
-    // Device check
     const isMobile = window.innerWidth <= 768;
 
-    // Styles for non-GitHub videos (desktop and mobile)
     const videoStylesDesktop = {
         maxWidth: "60vw",
         maxHeight: "60vh",
@@ -187,7 +189,6 @@ function showSlide() {
         margin: '0 auto',
     };
 
-    // Larger styles specifically for GitHub Pages videos
     const githubVideoStylesDesktop = {
         maxWidth: "80vw",
         maxHeight: "75vh",
@@ -203,7 +204,6 @@ function showSlide() {
         margin: '0 auto',
     };
 
-    // Styles for iframe (desktop and mobile)
     const iframeStylesDesktop = {
         width: '60vw',
         height: '60vh',
@@ -219,12 +219,6 @@ function showSlide() {
         margin: '0 auto',
     };
 
-    // Helper to check video extensions
-    function isVideoFile(src) {
-        return /\.(mp4|webm|ogg)$/i.test(src);
-    }
-
-    // Spinner HTML for overlay
     function createSpinner() {
         const spinnerWrapper = document.createElement('div');
         spinnerWrapper.style.position = 'absolute';
@@ -232,14 +226,10 @@ function showSlide() {
         spinnerWrapper.style.left = '50%';
         spinnerWrapper.style.transform = 'translate(-50%, -50%)';
         spinnerWrapper.style.pointerEvents = 'none';
-
-        spinnerWrapper.innerHTML = `
-          <div class="w-16 h-16 border-4 border-dashed rounded-full animate-spin border-yellow-500 mx-auto"></div>
-        `;
+        spinnerWrapper.innerHTML = `<div class="w-16 h-16 border-4 border-dashed rounded-full animate-spin border-yellow-500 mx-auto"></div>`;
         return spinnerWrapper;
     }
 
-    // Google Drive preview (iframe)
     if (photo.src.includes('drive.google.com') || photo.src.includes('drive.googleusercontent.com')) {
         let fileId = null;
         const matchFileId = photo.src.match(/\/file\/d\/([^\/]+)/) || photo.src.match(/id=([^&]+)/);
@@ -258,24 +248,18 @@ function showSlide() {
         } else {
             slideArea.textContent = 'Invalid Google Drive video URL.';
         }
-
-    // Native video files (.mp4/.webm/.ogg etc)
     } else if (isVideoFile(photo.src)) {
         const isGitHubPagesVideo = photo.src.includes('bala-shankar.github.io');
 
         if (isGitHubPagesVideo) {
-            // Container for thumbnail + spinner + video
             const container = document.createElement('div');
             container.style.position = 'relative';
             container.style.display = 'inline-block';
 
-            // Attempt thumbnail src by replacing extension with .jpg
-            // If you have better thumbnails, replace here
             const thumbnailSrc = photo.src.replace(/\.\w+$/, '.jpg');
 
             const thumbnail = document.createElement('img');
             thumbnail.src = thumbnailSrc;
-            thumbnail.alt = 'Video thumbnail';
             Object.assign(thumbnail.style, {
                 maxWidth: isMobile ? "100vw" : "80vw",
                 maxHeight: isMobile ? "60vh" : "75vh",
@@ -295,9 +279,7 @@ function showSlide() {
             videoEl.playsInline = true;
             videoEl.controls = false;
             videoEl.preload = "metadata";
-
             Object.assign(videoEl.style, isMobile ? githubVideoStylesMobile : githubVideoStylesDesktop);
-
             videoEl.style.position = 'absolute';
             videoEl.style.top = '0';
             videoEl.style.left = '0';
@@ -305,7 +287,7 @@ function showSlide() {
             videoEl.style.height = '100%';
             videoEl.style.borderRadius = '10px';
             videoEl.style.objectFit = 'cover';
-            videoEl.style.display = 'none'; // hide video initially
+            videoEl.style.display = 'none';
 
             videoEl.addEventListener('canplay', () => {
                 spinner.style.display = 'none';
@@ -314,24 +296,11 @@ function showSlide() {
                 videoEl.play().catch(e => console.warn('Video play failed:', e));
             });
 
-            videoEl.addEventListener('error', () => {
-                spinner.style.display = 'none';
-                container.innerHTML = '';
-                const err = document.createElement('div');
-                err.textContent = 'Video failed to load.';
-                err.style.color = 'red';
-                err.style.padding = '1em';
-                container.appendChild(err);
-            });
-
             container.appendChild(thumbnail);
             container.appendChild(spinner);
             container.appendChild(videoEl);
-
             slideArea.appendChild(container);
-
         } else {
-            // Non-GitHub videos: show video directly
             var videoEl = document.createElement('video');
             videoEl.src = photo.src;
             videoEl.muted = true;
@@ -340,44 +309,14 @@ function showSlide() {
             videoEl.playsInline = true;
             videoEl.controls = false;
             videoEl.preload = "metadata";
-            videoEl.style.background = '#000'; // black background before load
-
+            videoEl.style.background = '#000';
             Object.assign(videoEl.style, isMobile ? videoStylesMobile : videoStylesDesktop);
-
-            videoEl.addEventListener('loadedmetadata', () => {
-                videoEl.play().catch((err) => {
-                    console.warn('Autoplay failed:', err);
-                });
-            });
-
-            videoEl.addEventListener('error', () => {
-                slideArea.innerHTML = '';
-                var errorMsg = document.createElement('div');
-                errorMsg.textContent = 'Video failed to load.';
-                errorMsg.style.color = 'red';
-                errorMsg.style.padding = '1em';
-                slideArea.appendChild(errorMsg);
-            });
-
             slideArea.appendChild(videoEl);
         }
-
-    // Regular images
     } else {
         var img = document.createElement('img');
         img.src = photo.src;
-        img.alt = photo.alt || photo.caption || currentTrip.title;
         Object.assign(img.style, photoStyles);
-
-        img.addEventListener('error', () => {
-            img.style.display = 'none';
-            var err = document.createElement('div');
-            err.textContent = 'Image failed to load.';
-            err.style.color = 'red';
-            err.style.padding = '1em';
-            slideArea.appendChild(err);
-        });
-
         slideArea.appendChild(img);
     }
 
@@ -389,7 +328,9 @@ function showSlide() {
     }
 }
 
-
+// =====================
+// Modal Controls
+// =====================
 function openModalForTrip(trip) {
     currentTrip = trip;
     currentIndex = 0;
@@ -425,25 +366,23 @@ function attachEvents() {
     document.getElementById('prevBtn').addEventListener('click', prevSlide);
     document.addEventListener('keydown', function (e) {
         var modal = document.getElementById('modal');
-        if (modal.getAttribute('aria-hidden') === 'true')
-            return;
-        if (e.key === 'ArrowRight')
-            nextSlide();
-        if (e.key === 'ArrowLeft')
-            prevSlide();
-        if (e.key === 'Escape')
-            closeModal();
+        if (modal.getAttribute('aria-hidden') === 'true') return;
+        if (e.key === 'ArrowRight') nextSlide();
+        if (e.key === 'ArrowLeft') prevSlide();
+        if (e.key === 'Escape') closeModal();
     });
     document.getElementById('modal').addEventListener('click', function (ev) {
-        if (ev.target.id === 'modal')
-            closeModal();
+        if (ev.target.id === 'modal') closeModal();
     });
 }
 
+// =====================
+// Loader with Progress Bar
+// =====================
 function hideLoader() {
     var loader = document.getElementById('loader');
     if (loader) {
-        loader.style.display = 'none';
+        gsap.to(loader, { opacity: 0, duration: 0.5, onComplete: () => loader.style.display = 'none' });
     }
 }
 
@@ -460,26 +399,35 @@ function waitForImagesToLoad(containerSelector, callback) {
         return;
     }
 
+    const progressBar = document.getElementById('progress-bar');
+    const progressText = document.getElementById('progress-text');
+
     let loadedCount = 0;
     const totalImages = images.length;
 
-    function onLoadOrError() {
+    function updateProgress() {
         loadedCount++;
+        const percent = Math.round((loadedCount / totalImages) * 100);
+        progressBar.style.width = percent + '%';
+        progressText.textContent = percent + '%';
         if (loadedCount >= totalImages) {
-            callback();
+            setTimeout(callback, 300);
         }
     }
 
     images.forEach((img) => {
         if (img.complete && img.naturalWidth !== 0) {
-            onLoadOrError();
+            updateProgress();
         } else {
-            img.addEventListener('load', onLoadOrError);
-            img.addEventListener('error', onLoadOrError);
+            img.addEventListener('load', updateProgress);
+            img.addEventListener('error', updateProgress);
         }
     });
 }
 
+// =====================
+// Init
+// =====================
 document.addEventListener('DOMContentLoaded', function () {
     renderTrips();
     attachEvents();
