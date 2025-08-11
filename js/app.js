@@ -1,3 +1,18 @@
+// Add this near the top
+var priorityImages = [
+    'assets/Rishikesh/4.jpg',
+    "assets/Rishikesh/1.jpg",
+    "assets/Rishikesh/2.jpg",
+    'assets/Daramshala/1.jpg',
+    'assets/Daramshala/2.jpg',
+    'assets/Daramshala/3.jpg',
+    'assets/Pune/1.jpg',
+    'assets/Pune/2.jpg',
+    'assets/Pune/3.jpg'
+    // Add more important images here
+];
+
+
 // =====================
 // Trips Data
 // =====================
@@ -425,11 +440,42 @@ function waitForImagesToLoad(containerSelector, callback) {
     });
 }
 
+function waitForSelectedImagesToLoad(imagesList, callback) {
+    if (!imagesList || imagesList.length === 0) {
+        callback();
+        return;
+    }
+
+    const progressBar = document.getElementById('progress-bar');
+    const progressText = document.getElementById('progress-text');
+
+    let loadedCount = 0;
+    const totalImages = imagesList.length;
+
+    function updateProgress() {
+        loadedCount++;
+        const percent = Math.round((loadedCount / totalImages) * 100);
+        if (progressBar) progressBar.style.width = percent + '%';
+        if (progressText) progressText.textContent = percent + '%';
+        if (loadedCount >= totalImages) {
+            setTimeout(callback, 300);
+        }
+    }
+
+    imagesList.forEach(src => {
+        const img = new Image();
+        img.onload = updateProgress;
+        img.onerror = updateProgress;
+        img.src = src;
+    });
+}
+
+
 // =====================
 // Init
 // =====================
 document.addEventListener('DOMContentLoaded', function () {
     renderTrips();
     attachEvents();
-    waitForImagesToLoad('#trips', hideLoader);
+    waitForSelectedImagesToLoad(priorityImages, hideLoader);
 });
