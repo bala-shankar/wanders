@@ -63,7 +63,7 @@ body{
 .trips-grid{
   display:grid;
   gap:2rem;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   margin:1.25rem 0 3rem;
 }
 .trip-card{
@@ -195,4 +195,10 @@ a {
 @media (max-width:640px){
   .modal-content{flex-direction:column}
   .nav-btn{font-size:1.3rem}
+}
+
+@media (max-width: 768px) {
+  .trips-grid {
+    grid-template-columns: 1fr; /* mobile: 1 per row */
+  }
 }
