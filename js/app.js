@@ -51,7 +51,7 @@ var trips = [
     {
         id: 'trip-europe',
         title: 'European Roadtrip',
-        location: 'Maharastra',
+        location: 'Pune',
         year: '2025',
         cover: 'assets/Pune/1.jpg',
         photos: [
